@@ -13,6 +13,7 @@ sum = 0
 sd_sum = 0
 
 probabilities = {}
+highest_prob = 0
 
 if __name__ == "__main__":
     print("starting generation of statistics...")
@@ -57,6 +58,9 @@ if __name__ == "__main__":
         prob = (stats.norm.cdf(zb) - stats.norm.cdf(za)) * 100
         probabilities[c] = prob
 
+        if prob > highest_prob:
+            highest_prob = prob
+
         c += 1
 
     values = list(probabilities.keys())
@@ -70,6 +74,7 @@ if __name__ == "__main__":
     plt.title("Probability Distribution of Cycle Lengths")
 
     plt.grid(True)
+    plt.text(mean, highest_prob - 3, f"mean={round(mean, 2)}")
     #plt.show()
 
     plt.savefig("./docs/images/graph.png")
