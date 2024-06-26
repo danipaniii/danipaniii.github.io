@@ -88,7 +88,7 @@ if __name__ == "__main__":
     ax.set_yticks(y)
     ax.set_yticklabels([str(round(i, 2)) for i in y])
 
-    ax.annotate(f'Mean: {mean:.2f}', xy=(mean, max_prob), xytext=(mean - 5, max_prob - 5),
+    ax.annotate(f'Mean: {mean:.2f}', xy=(mean, max_prob), xytext=(mean - 3, max_prob - 3),
                 arrowprops=dict(facecolor='black', arrowstyle='->'))
 
     ax.grid(True)
