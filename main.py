@@ -13,7 +13,6 @@ sum = 0
 sd_sum = 0
 
 probabilities = {}
-highest_prob = 0
 
 if __name__ == "__main__":
     print("starting generation of statistics...")
@@ -23,8 +22,6 @@ if __name__ == "__main__":
         for row in csv_reader:
             key, value = int(row[0]), int(row[1])
             data[key] = value
-
-    print("Read data...")
     
     for k in data.keys():
         n += data[k]
@@ -58,25 +55,62 @@ if __name__ == "__main__":
         prob = (stats.norm.cdf(zb) - stats.norm.cdf(za)) * 100
         probabilities[c] = prob
 
-        if prob > highest_prob:
-            highest_prob = prob
-
         c += 1
 
     values = list(probabilities.keys())
     probs = list(probabilities.values())
 
-    plt.figure(figsize=(10, 6))
-    plt.plot(values, probs, marker="o")
+    max_prob = float("-inf")
+    min_prob = float("inf")
 
-    plt.xlabel("Cycle Length (days)")
-    plt.ylabel("Probability in %")
-    plt.title("Probability Distribution of Cycle Lengths")
+    for p in probs:
+        print(p)
+        if p > max_prob:
+            max_prob = round(p)
 
-    plt.grid(True)
-    plt.text(mean, highest_prob - 3, f"mean={round(mean, 2)}")
-    #plt.show()
+        if p < min_prob:
+            min_prob = round(p)
+
+    fig, ax = plt.subplots()
+    fig.set_size_inches(16, 10)
+
+    ax.set_title('Distribution of Cycle Length Probabilities')
+    ax.plot(values, probs, marker='o', linestyle='-', color='b')
+    ax.set_xlabel('Cycle Length (Days)')
+    ax.set_ylabel('Probabilities in %')
+
+    x = list(range(min, max+1))
+    y = list(range(min_prob, max_prob+1))
+
+    ax.set_xticks(x)
+    ax.set_xticklabels([str(i) for i in x])
+
+    ax.set_yticks(y)
+    ax.set_yticklabels([str(round(i, 2)) for i in y])
+
+    ax.annotate(f'Mean: {mean:.2f}', xy=(mean, max_prob), xytext=(mean - 5, max_prob - 5),
+                arrowprops=dict(facecolor='black', arrowstyle='->'))
+
+    ax.grid(True)
 
     plt.savefig("./docs/images/graph.png")
+
+    # Probs table
+    table_data = []
+    for val, prob in zip(values, probs):
+        table_data.append([val, f'{prob:.2f}%'])
+
+    fig2, ax2 = plt.subplots(figsize=(20, 12))
+    fig2.set_size_inches(20, 24)
+
+    ax2.axis('off')  # Turn off axis for the table plot
+    table_plot = ax2.table(cellText=table_data, colLabels=["Cycle Length (Days)", "Probability in %"], loc='center', cellLoc='center', bbox=[-0.1, -0.1, 1.15, 1.15])
+    table_plot.auto_set_font_size(False)
+    table_plot.set_fontsize(14)
+    plt.savefig('./docs/images/table.png')
+    
+    plt.show()
+
+   
 
     
