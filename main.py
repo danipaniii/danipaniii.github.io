@@ -98,13 +98,15 @@ if __name__ == "__main__":
     # Probs table
     table_data = []
     for val, prob in zip(values, probs):
-        table_data.append([val, f'{prob:.2f}%'])
+        z = (val - mean) / sd
+        occur_today = stats.norm.cdf(z) * 100
+        table_data.append([val, f'{prob:.2f}%', f"{occur_today:.2f}%"])
 
     fig2, ax2 = plt.subplots(figsize=(20, 12))
     fig2.set_size_inches(20, 24)
 
     ax2.axis('off')  # Turn off axis for the table plot
-    table_plot = ax2.table(cellText=table_data, colLabels=["Cycle Length (Days)", "Probability in %"], loc='center', cellLoc='center', bbox=[-0.1, -0.1, 1.15, 1.15])
+    table_plot = ax2.table(cellText=table_data, colLabels=["Cycle Length (Days)", "Probability in %", "Period will occur today in %"], loc='center', cellLoc='center', bbox=[-0.1, -0.1, 1.15, 1.15])
     table_plot.auto_set_font_size(False)
     table_plot.set_fontsize(14)
     plt.savefig('./docs/images/table.png')
